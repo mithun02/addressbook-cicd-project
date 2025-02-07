@@ -1,40 +1,44 @@
-pipeline{
+pipeline {
     agent any
-    stages{
-        stage('github validation'){
-          steps{
-                 git url: 'https://github.com/akshu20791/addressbook-cicd-project'
-          }
+    stages {
+        stage('GitHub Validation') {
+            steps {
+                git url: 'https://github.com/mithun02/addressbook-cicd-project.git'
+            }
         }
-        stage('compiling the code'){
-          steps{
-                 sh 'mvn compile'
-          }
+        stage('Compiling the Code') {
+            steps {
+                sh 'mvn compile'
+            }
         }
-        stage('testing the code'){
-            steps{
+        stage('Testing the Code') {
+            steps {
                 sh 'mvn test'
             }
         }
-        stage('qa of the code'){
-            steps{
+        stage('QA of the Code') {
+            steps {
                 sh 'mvn pmd:pmd'
             }
         }
-        stage('package'){
-            steps{
+        stage('Package') {
+            steps {
                 sh 'mvn package'
             }
         }
-        stage('Deploy the project on Tomcat') {
+        stage('Verify WAR File') {  // ✅ Debugging step
+            steps {
+                sh 'ls -lh /var/lib/jenkins/workspace/addressbookcicd/target/'
+            }
+        }
+        stage('Deploy the Project on Tomcat') {
             steps {
                 sh '''
-                sudo mv /var/lib/jenkins/workspace/addressbookcicd/target/addressbook.war /home/ubuntu/apache-tomcat-8.5.100/webapps/
-                sudo /home/ubuntu/apache-tomcat-8.5.100/bin/shutdown.sh
-                sudo /home/ubuntu/apache-tomcat-8.5.100/bin/startup.sh
+                sudo cp /var/lib/jenkins/workspace/addressbookcicd/target/addressbook.war /home/mithun/apache-tomcat-9.0.93/webapps/
+                sudo /home/mithun/apache-tomcat-9.0.93/bin/shutdown.sh
+                sudo /home/mithun/apache-tomcat-9.0.93/bin/startup.sh
                 '''
             }
         }
-
     }
 }

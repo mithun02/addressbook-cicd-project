@@ -26,10 +26,15 @@ pipeline{
                 sh 'mvn package'
             }
         }
-        stage("deploy the project on tomcat"){
-            steps{
-                sh "sudo mv /var/lib/jenkins/workspace/mypipeline/target/addressbook.war /home/ubuntu/apache-tomcat-8.5.100/webapps/"
+        stage('Deploy the project on Tomcat') {
+            steps {
+                sh '''
+                sudo mv /var/lib/jenkins/workspace/addressbookcicd/target/addressbook.war /home/ubuntu/apache-tomcat-8.5.100/webapps/
+                sudo /home/ubuntu/apache-tomcat-8.5.100/bin/shutdown.sh
+                sudo /home/ubuntu/apache-tomcat-8.5.100/bin/startup.sh
+                '''
             }
         }
+
     }
 }
